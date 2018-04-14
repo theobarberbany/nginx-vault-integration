@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# -----------------------------------------------------------
-# secure ngnix container - integrated with Vault for secret storage
-# Maintained by:  niall@sharedvisionsolutions.com
-# -----------------------------------------------------------
-
 # ------------------------------------------------------------
 # Environment Variables
 # ------------------------------------------------------------
@@ -12,6 +7,7 @@
 [[ -z ${TOKEN} ]] && echo "A valid TOKEN for accessing Vault was not specified in the environment." && exit 1
 [[ -z ${URL} ]] && echo "A valid URL for accessing Vault was not specified in the environment." && exit 1
 [[ -z ${INDEX} ]] && echo "A valid INDEX name for reading Vault secrets." && exit 1
+[[ -z ${SERV} ]] && echo "A valid SERV url to instruct nginx where to serve to." && exit 1
 
 # -----------------------------------------------------------
 # Fetch Configuration From Vault
@@ -34,6 +30,9 @@ override() {
 override ngnix.conf    /etc/nginx/ngnix.conf
 
 override default.conf /etc/nginx/sites-enabled/default.conf
+
+#Write in url 
+sed -i "s/JAIME/${SERV}/g" /etc/nginx/sites-enabled/default.conf
 
 override ssl.conf     /etc/nginx/conf.d/ssl.conf
 override cert         /etc/pki/cert.crt
